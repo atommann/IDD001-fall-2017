@@ -1,0 +1,112 @@
+= 实验，第 4 课
+Atommann <atommann@gmail.com>
+V0.1, 2017-10-11
+:toc:
+:imagesdir: figures
+:sourcedir: src
+
+== 测试 digitalRead() 函数
+
+.按键和 LED 接线图
+image::button-demo_bb.svg[sch]
+
+[TIP]
+完成接线后，在上电之前，请再次检查接线，注意是否有短路存在(如 5V 和 GND
+都连接到面包板的同一条电源轨道上了)。
+
+[source,cpp]
+----
+include::{sourcedir}/button-demo-1/button-demo-1.ino[]
+----
+
+上面的程序把 A0 pin 设置成输入模式，然后简单地用 digitalRead()
+去读取它的状态。因为电路上加了上拉电阻，键未按下时，digitalRead(buttonPin)
+读到的值始终是 HIGH, in_val 的值是 0b00000001，因此未按键时 LED 亮。
+
+如果键被按下，A0 直接和电源地相连，in_val = 0b00000000，LED 灭。
+
+== 按一下加一
+
+[source,cpp]
+----
+include::{sourcedir}/button-demo-2-bounce/button-demo-2-bounce.ino[]
+----
+<1> while 后的分号 (;) 是 C 语言的空语句(什么都不干)，见下面的说明。
+
+
+测试上面的代码。数你按键的次数，并观察 LED 上显示出的数字，观察两者是否匹配？多试几次。
+
+
+[NOTE]
+.C 语言的空语句
+============================
+C 语言的标准 C99 6.8.3 Expression and null statements 小节写到: "A null statement (consisting of just a semicolon) performs no operations."
+
+while 循环的格式是
+
+[source,cpp]
+----
+while ( 判断表达式 ) 语句
+----
+
+[source,cpp]
+----
+while ( 表达式 ) ;
+----
+
+等价于下面的写法，如果“表达式”的值一直为真(true)，则形成一个死循环。
+
+[source,cpp]
+----
+while ( 表达式 )
+{
+}
+----
+
+============================
+
+== 消除抖动
+
+[source,cpp]
+----
+include::{sourcedir}/button-demo-3-debounce/button-demo-3-debounce.ino[]
+----
+
+用 delay() 跳过抖动区。
+
+== 再加一个键
+
+[source,cpp]
+----
+include::{sourcedir}/button-demo-4-morekeys/button-demo-4-morekeys.ino[]
+----
+<1> 见下面的说明。
+
+* 键 1 被按下时，digitalRead(button1Pin) 返回的值是 0b00000001.
+* 键 2 被按下时，digitalRead(button2Pin) 返回的值也是 0b00000001.
+
+digitalRead(button2Pin) << 1 的意思是把 << 符号左边的值向左边移动 1 位，于是 0b00000001 就变成了 0b00000010, 这样键 1 和键 2 两个值就错开了，加在一起，合到一个字节中，方便后续的处理。
+
+[NOTE]
+.位操作
+============================
+在给像 Arduino
+一样的小型嵌入式微控制器编写代码时，会经常用到位操作(Bit
+manipulation). 没有经验者在实践后会慢慢熟悉。
+
+例如
+
+[source,cpp]
+----
+in_val = digitalRead(button1Pin) + (digitalRead(button2Pin) << 1);
+----
+
+还可以用按位或(Bitwise OR)写成:
+
+[source,cpp]
+----
+in_val = digitalRead(button1Pin) | (digitalRead(button2Pin) << 1);
+----
+
+============================
+
