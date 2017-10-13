@@ -82,8 +82,8 @@ include::{sourcedir}/button-demo-4-morekeys/button-demo-4-morekeys.ino[]
 ----
 <1> 见下面的说明。
 
-* 键 1 被按下时，digitalRead(button1Pin) 返回的值是 0b00000001.
-* 键 2 被按下时，digitalRead(button2Pin) 返回的值也是 0b00000001.
+* 键 1 未被按下时，digitalRead(button1Pin) 返回的值是 0b00000001.
+* 键 2 未被按下时，digitalRead(button2Pin) 返回的值也是 0b00000001.
 
 digitalRead(button2Pin) << 1 的意思是把 << 符号左边的值向左边移动 1 位，于是 0b00000001 就变成了 0b00000010, 这样键 1 和键 2 两个值就错开了，加在一起，合到一个字节中，方便后续的处理。
 
