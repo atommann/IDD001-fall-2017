@@ -60,6 +60,6 @@ void loop() {
 
   write_leds(count); // 显示
 
-  //Serial.println(in_val, HEX); // 可以打印到串口观察数值
+  Serial.println(in_val, BIN); // 可以打印到串口观察数值
 }
 
